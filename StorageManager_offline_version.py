@@ -45,10 +45,10 @@ class Extra(Storage):
 gear1 = Storage('Sound', 'Mixer', 'Midas M32', 1)
 gear2 = Storage('Sound', 'Stagebox', 'DL32', 1)
 gear3 = Storage('Light', 'Beam', 'Gladiator', 16)
-gear4 = Storage('Light', 'Solar 27Q', 'Prolights', 12)
-gear5 = Storage('Stage', 'Podest 2x1m', 'Alustage', 18)
-gear6 = Storage('Power', 'Rodzielnia 32A', 'Ta w kejsie', 1)
-gear7 = Storage('Extra', 'Toolbox', '-', 1)
+gear4 = Storage('Light', 'Naświetlacz', 'Solar 27Q', 12)
+gear5 = Storage('Stage', 'Podest', '2x1m', 18)
+gear6 = Storage('Power', 'Rodzielnia', '32A z miernikami poboru', 1)
+gear7 = Storage('Extra', 'Narzędziówka', 'Nowa narzędziówka', 1)
 
 
 for i in Storage.instances:
