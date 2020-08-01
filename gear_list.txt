@@ -1,0 +1,7 @@
+Sound, Mixer, Midas M32, 1
+Sound, Stagebox, DL32, 1
+Light, Beam, Gladiator, 16
+Light, Naświetlacz, Solar 27Q, 12
+Stage, Podest, 2x1m, 18
+Power, Rodzielnia, 32A z miernikami poboru, 1
+Extra, Narzędziówka, Nowa narzędziówka, 1
