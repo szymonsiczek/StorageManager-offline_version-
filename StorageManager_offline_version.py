@@ -43,17 +43,25 @@ class Extra(Storage):
 
 
 def read_gear_from_file():
-    for line in file.readlines():
+    File = open(file)
+    for line in File.readlines():
         gear = line.split(', ')
         if gear[0] in Storage.subclasses:
             eval(gear[0])(gear[0], gear[1], gear[2], int(gear[3]))
 
 
-file = open(
-    'C:\\Users\\User\\Dropbox\\Python\\my_projects\\storageManager\\gear_list.txt')
+def add_item_to_gear_file(string):
+    File = open(file, 'a')
+    File.write('\n' + string)
+    File.close()
+    gear = string.split(', ')
+    if gear[0] in Storage.subclasses:
+        eval(gear[0])(gear[0], gear[1], gear[2], int(gear[3]))
+
+
+file = 'C:\\Users\\User\\Dropbox\\Python\\my_projects\\storageManager\\gear_list.txt'
 
 read_gear_from_file()
 
 for i in Sound.instances:
     print(i.full)
-    print(isinstance(i, Sound))

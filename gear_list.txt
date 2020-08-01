@@ -5,3 +5,6 @@ Light, Naswietlacz, Solar 27Q, 12
 Stage, Podest, 2x1m, 18
 Power, Rodzielnia, 32A z miernikami poboru, 1
 Extra, Narzedziowka, Nowa narzedziowka, 1
+Sound, Speaker, ARCS Wide, 4
+
+Sound, Speaker, ARCS Focus, 4
