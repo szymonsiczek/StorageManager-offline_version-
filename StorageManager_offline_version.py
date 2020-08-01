@@ -59,9 +59,17 @@ def add_item_to_gear_file(string):
         eval(gear[0])(gear[0], gear[1], gear[2], int(gear[3]))
 
 
+def delete_item_from_file(file):
+    pass
+
+
+def show_all_instances_of_subclass(subclass):
+    pass
+
+
+def show_all():
+    for item in Storage.instances:
+        print(item.full)
+
+
 file = 'C:\\Users\\User\\Dropbox\\Python\\my_projects\\storageManager\\gear_list.txt'
-
-read_gear_from_file()
-
-for i in Sound.instances:
-    print(i.full)
