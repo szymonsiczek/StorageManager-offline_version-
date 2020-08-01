@@ -1,9 +1,13 @@
 
 class Storage:
-    def __init__(self, name, model, quantity):
+    instances = []
+
+    def __init__(self, subclass, name, model, quantity):
+        self.subclass = subclass
         self.name = name
         self.model = model
         self.quantity = quantity
+        Storage.instances.append(self)
 
     @property
     def full(self):
@@ -11,14 +15,15 @@ class Storage:
 
 
 class Sound(Storage):
-    pass
+    instances = []
 
 
 class Light(Storage):
     pass
 
 
-class Stage(Storage)
+class Stage(Storage):
+    pass
 
 
 class Power(Storage):
@@ -29,4 +34,7 @@ class Extra(Storage):
     pass
 
 
-sound1 = Sound('Mixer', 'Midas M32', 1)
+sound1 = Storage('sound', 'Mixer', 'Midas M32', 1)
+sound2 = Storage('sound', 'Stagebox', 'DL32', 1)
+
+print(Sound.instances)
