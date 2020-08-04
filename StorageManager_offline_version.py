@@ -101,6 +101,9 @@ class Item:
 class Sound(Item):
     instances = []
 
+    def show_quantity(self):
+        print(f'{self.type} {self.model} - {self.quantity}')
+
 
 class Light(Item):
     instances = []

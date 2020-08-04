@@ -16,3 +16,4 @@ Stage, karata aluminiowa, 2m czarna, 4
 Sound, Monitor , TW Audio C12, 6
 Sound, Speaker, JBL Vrx, 6
 Light, Reflektor, PC LED ADJ, 4
+Stage, Podstawa pod kratê, Stalowa czarna, 4
