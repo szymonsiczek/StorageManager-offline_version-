@@ -9,3 +9,4 @@ Sound, Speaker, ARCS Wide, 4
 Sound, Speaker, ARCS Focus, 4
 Light, Spot, Mac700, 8
 Stage, Podest, 1x1, 1
+Light, LedWash, Robe600+, 6
