@@ -17,10 +17,12 @@ class Item:
     def sub_type_and_name(self):
         return '(' + self.subclass + ')  ' + self.type + ' ' + self.model
 
+    @staticmethod
     def add_item():
         item = Item.get_new_item_data()
         Item.create_instance_and_add_item_to_item_list(item)
 
+    @staticmethod
     def get_new_item_data():
         print('\nPlease type new item data:')
         new_item_data = []
@@ -40,6 +42,7 @@ class Item:
         print(new_item_data)
         return new_item_data
 
+    @staticmethod
     def create_instance_and_add_item_to_item_list(list):
         eval(list[0])(list[0], list[1], list[2], int(list[3]))
         File = open(file, 'a')
@@ -47,6 +50,7 @@ class Item:
         File.write('\n' + string)
         File.close()
 
+    @staticmethod
     def read_items_from_file():
         File = open(file)
         for line in File.readlines():
@@ -54,16 +58,20 @@ class Item:
             if item[0] in Item.subclasses:
                 eval(item[0])(item[0], item[1], item[2], int(item[3]))
 
+    @staticmethod
     def delete_item():
         delete_item_from_file()
         read_items_from_file()
 
+    @staticmethod
     def delete_item_from_file(file):
         pass
 
+    @staticmethod
     def delete_all_items():
         pass
 
+    @staticmethod
     def show_all():
         print('')
         print('---')
@@ -76,6 +84,7 @@ class Item:
         print('\nPress enter to go back to menu')
         input()
 
+    @staticmethod
     def show_all_instances_of_subclass():
         Item.show_user_all_subclasses()
         print('Show items in category:')
@@ -91,6 +100,7 @@ class Item:
         print('\nPress enter to go back to menu')
         input()
 
+    @staticmethod
     def show_user_all_subclasses():
         print('Categories are: ', end='')
         for subclass in Item.subclasses:
@@ -100,9 +110,6 @@ class Item:
 
 class Sound(Item):
     instances = []
-
-    def show_quantity(self):
-        print(f'{self.type} {self.model} - {self.quantity}')
 
 
 class Light(Item):
@@ -159,6 +166,10 @@ def create_option_menu():
 def show_menu(menu):
     for number, action in menu.items():
         print(f'{number}. {action[0]}')
+
+
+def zesraj_sie():
+    print('Zesrałem się!')
 
 
 file = 'C:\\Users\\User\\Dropbox\\Python\\my_projects\\storageManager\\item_list.txt'
