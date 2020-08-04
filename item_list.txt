@@ -10,3 +10,9 @@ Sound, Speaker, ARCS Focus, 4
 Light, Spot, Mac700, 8
 Stage, Podest, 1x1, 1
 Light, LedWash, Robe600+, 6
+Stage, nozka do podestu, 40-60cm, 48
+Stage, krata aluminiowa, 2m srebrna, 4
+Stage, karata aluminiowa, 2m czarna, 4
+Sound, Monitor , TW Audio C12, 6
+Sound, Speaker, JBL Vrx, 6
+Light, Reflektor, PC LED ADJ, 4
