@@ -2,7 +2,8 @@
 class Item:
     instances = []
     subclasses = ['Sound', 'Light', 'Stage', 'Power', 'Extra']
-    item_instance_data = ['Category', 'Type of item:', 'Model', 'Quantity']
+    item_instance_data = ['Category',
+                          'Type of item:', 'Model', 'Quantity']
 
     def __init__(self, subclass, type, model, quantity):
         self.subclass = subclass
@@ -37,7 +38,6 @@ class Item:
             if input_data == 'menu':
                 start_program_interface()
             new_item_data.append(input_data)
-        print(new_item_data)
         return new_item_data
 
     @staticmethod
@@ -54,8 +54,11 @@ class Item:
         File = open(file)
         for line in File.readlines():
             item = line.split(', ')
-            if item[0] in Item.subclasses:
+            if item[0] in Item.subclasses and item[0] != 'Sound':
                 eval(item[0])(item[0], item[1], item[2], int(item[3]))
+            elif item[0] in Item.subclasses and item[0] == 'Sound':
+                eval(item[0])(item[0], item[1], item[2],
+                              int(item[3]), int(item[4]))
 
     @staticmethod
     def delete_item():
@@ -133,6 +136,25 @@ class Item:
 class Sound(Item):
     instances = []
 
+    def __init__(self, subclass, type, model, quantity, spl=None):
+        super().__init__(subclass, type, model, quantity)
+        self.spl = spl
+
+    @staticmethod
+    def show_spl_level():
+        sound_item = get_user_choice(
+            'Please provide type or model of an object to show its SPL level').lower()
+        for instance in Sound.instances:
+            if sound_item in instance.sub_type_and_name.lower():
+                Sound.prompt_item_spl_level(instance)
+
+    def prompt_item_spl_level(self):
+        if self.spl != 0:
+            print(
+                f'\n{self.type} {self.model} sound pressure level is: {self.spl} dB\n')
+        else:
+            print(f"\nI'm {self.type} {self.model}, I don't make noise\n")
+
 
 class Light(Item):
     instances = []
@@ -178,7 +200,7 @@ def show_action_options_and_execute_user_choice():
 
 def create_option_menu():
     actions = [['Add item', 'Item.add_item()'], ['Show all items',
-                                                 'Item.show_all()'], ['Show list of items from a certain category', 'Item.show_all_instances_of_subclass()'], ['Delete item', 'Item.delete_item()'], ['Delete all items', 'Item.delete_all_items()']]
+                                                 'Item.show_all()'], ['Show list of items from a certain category', 'Item.show_all_instances_of_subclass()'], ['Delete item', 'Item.delete_item()'], ['Delete all items', 'Item.delete_all_items()'], ['Show Sound Pressure Level', 'Sound.show_spl_level()']]
     option_menu = {}
     for action in actions:
         option_menu.update({(actions.index(action) + 1): action})
