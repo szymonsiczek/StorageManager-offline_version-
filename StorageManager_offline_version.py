@@ -88,7 +88,7 @@ class Item:
     def delete_all_items():
         delete_all_confirmation = get_user_choice(
             'Please confirm (YES/NO) that you want to delete all items')
-        if delete_all_confirmation == 'YES':
+        if delete_all_confirmation.lower() == 'yes':
             File = open(file, 'w')
             File.close()
             Item.load_items_from_file()
