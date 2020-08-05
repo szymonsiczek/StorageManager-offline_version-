@@ -30,12 +30,10 @@ class Item:
             print('\n' + data_type + ':')
             if data_type == 'Category':
                 Item.show_user_all_subclasses()
-                print('')
-            input_data = input()
+            input_data = get_user_choice('')
             while data_type == 'Category' and input_data not in Item.subclasses and input_data != 'menu':
-                print(
+                input_data = get_user_choice(
                     'Please type one of the categories from the list (start with capital letter)')
-                input_data = input()
             if input_data == 'menu':
                 start_program_interface()
             new_item_data.append(input_data)
@@ -51,7 +49,8 @@ class Item:
         File.close()
 
     @staticmethod
-    def read_items_from_file():
+    def load_items_from_file():
+        Item.instances = []
         File = open(file)
         for line in File.readlines():
             item = line.split(', ')
@@ -60,12 +59,30 @@ class Item:
 
     @staticmethod
     def delete_item():
-        delete_item_from_file()
-        read_items_from_file()
+        File = open(file, 'r')
+        items_in_file = File.readlines()
+        File.close()
+        choice = get_user_choice(
+            'Which item would you like to delete? Please provide specific info about type or model.')
+        for item in items_in_file:
+            if choice.lower() in item.lower():
+                confirmation = None
+                while confirmation != 'y' and confirmation != 'n':
+                    confirmation = get_user_choice(
+                        'Please confirm (Y/N) that you want to delete item: ' + item).lower()
+                    if confirmation == 'y':
+                        Item.delete_item_from_file(items_in_file, item, file)
+                    elif confirmation == 'n':
+                        pass
+        Item.load_items_from_file()
 
     @staticmethod
-    def delete_item_from_file(file):
-        pass
+    def delete_item_from_file(item_list, item, file):
+        item_list.remove(item)
+        File = open(file, 'w')
+        for line in item_list:
+            File.write(line)
+        File.close()
 
     @staticmethod
     def delete_all_items():
@@ -82,23 +99,21 @@ class Item:
             print(item)
         print('---')
         print('\nPress enter to go back to menu')
-        input()
+        get_user_choice(None)
 
     @staticmethod
     def show_all_instances_of_subclass():
         Item.show_user_all_subclasses()
-        print('Show items in category:')
-        category = input()
+        category = get_user_choice('Show items in category:')
         while category not in Item.subclasses and category != 'menu':
             print('\nPlease choose one of the categories, starting with capital letter.')
             Item.show_user_all_subclasses()
-            category = input()
+            category = get_user_choice(None)
         if category == 'menu':
             start_program_interface()
         for item in eval(category).instances:
             print(item.sub_type_and_name)
-        print('\nPress enter to go back to menu')
-        input()
+        get_user_choice('\nPress enter to go back to menu')
 
     @staticmethod
     def show_user_all_subclasses():
@@ -129,7 +144,7 @@ class Extra(Item):
 
 
 def initialize():
-    Item.read_items_from_file()
+    Item.load_items_from_file()
     start_program_interface()
 
 
@@ -141,7 +156,7 @@ def start_program_interface():
 def show_action_options_and_execute_user_choice():
     menu = create_option_menu()
     show_menu(menu)
-    choice = input()
+    choice = get_user_choice(None)
     try:
         choice = int(choice)
     except:
@@ -168,8 +183,11 @@ def show_menu(menu):
         print(f'{number}. {action[0]}')
 
 
-def zesraj_sie():
-    print('Zesrałem się!')
+def get_user_choice(prompt_info):
+    if prompt_info != None:
+        print('\n' + prompt_info)
+    user_choice = input()
+    return user_choice
 
 
 file = 'C:\\Users\\User\\Dropbox\\Python\\my_projects\\storageManager\\item_list.txt'

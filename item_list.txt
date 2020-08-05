@@ -2,18 +2,9 @@ Sound, Mixer, Midas M32, 1
 Sound, Stagebox, DL32, 1
 Light, Beam, Gladiator, 16
 Light, Naswietlacz, Solar 27Q, 12
-Stage, Podest, 2x1m, 18
-Power, Rodzielnia, 32A z miernikami poboru, 1
 Extra, Narzedziowka, Nowa narzedziowka, 1
-Sound, Speaker, ARCS Wide, 4
-Sound, Speaker, ARCS Focus, 4
-Light, Spot, Mac700, 8
-Stage, Podest, 1x1, 1
-Light, LedWash, Robe600+, 6
-Stage, nozka do podestu, 40-60cm, 48
-Stage, krata aluminiowa, 2m srebrna, 4
-Stage, karata aluminiowa, 2m czarna, 4
-Sound, Monitor , TW Audio C12, 6
-Sound, Speaker, JBL Vrx, 6
-Light, Reflektor, PC LED ADJ, 4
-Stage, Podstawa pod kratê, Stalowa czarna, 4
+
+
+
+
+
