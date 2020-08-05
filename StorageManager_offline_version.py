@@ -30,7 +30,7 @@ class Item:
             print('\n' + data_type + ':')
             if data_type == 'Category':
                 Item.show_user_all_subclasses()
-            input_data = get_user_choice('')
+            input_data = get_user_choice(None)
             while data_type == 'Category' and input_data not in Item.subclasses and input_data != 'menu':
                 input_data = get_user_choice(
                     'Please type one of the categories from the list (start with capital letter)')
@@ -86,7 +86,14 @@ class Item:
 
     @staticmethod
     def delete_all_items():
-        pass
+        delete_all_confirmation = get_user_choice(
+            'Please confirm (YES/NO) that you want to delete all items')
+        if delete_all_confirmation == 'YES':
+            File = open(file, 'w')
+            File.close()
+            Item.load_items_from_file()
+        else:
+            pass
 
     @staticmethod
     def show_all():
