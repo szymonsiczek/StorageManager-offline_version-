@@ -47,6 +47,12 @@ def show_action_options_and_execute_user_choice():
     except:
         print('\nPlease pick number from the options printed above.\n')
         start_program_interface()
+    if choice in menu.keys():
+        pass  # work on that!
+    elif choice not in menu.keys():
+        print('\nPlease pick number from the options printed above.\n')
+        start_program_interface()
+    start_program_interface()
 
 
 def create_option_menu():
