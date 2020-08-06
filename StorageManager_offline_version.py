@@ -2,8 +2,8 @@
 class Item:
     instances = []
     subclasses = ['Sound', 'Light', 'Stage', 'Power', 'Extra']
-    item_instance_data = ['Category',
-                          'Type of item:', 'Model', 'Quantity']
+    categories_to_prompt = ['Category:',
+                            'Type of item:', 'Model:', 'Quantity:']
 
     def __init__(self, subclass, type, model, quantity):
         self.subclass = subclass
@@ -25,24 +25,25 @@ class Item:
 
     @staticmethod
     def get_new_item_data():
-        print('\nPlease type new item data:')
         new_item_data = []
-        for data_type in Item.item_instance_data:
-            print('\n' + data_type + ':')
-            if data_type == 'Category':
-                Item.show_user_all_subclasses()
-            input_data = get_user_choice(None)
-            while data_type == 'Category' and input_data not in Item.subclasses and input_data != 'menu':
-                input_data = get_user_choice(
-                    'Please type one of the categories from the list (start with capital letter)')
-            if input_data == 'menu':
-                start_program_interface()
-            new_item_data.append(input_data)
-        return new_item_data
+        print('\nPlease type new item data. Start with category (starting with capital letter).')
+        Item.show_user_all_subclasses()
+        category = get_user_choice(None)
+        while category not in Item.subclasses and category != 'menu':
+            print(
+                '\nPlease type new item data. Start with category (starting with capital letter).')
+            Item.show_user_all_subclasses()
+            category = get_user_choice(None)
+        if category.lower() == 'menu':
+            show_action_options_and_execute_user_choice()
+        new_item_data.append(category)
+        for attribute in eval(category).categories_to_prompt[1:]:
+            new_item_data.append(get_user_choice(attribute))
+        return(new_item_data)
 
     @staticmethod
     def create_instance_and_add_item_to_item_list(list):
-        eval(list[0])(list[0], list[1], list[2], int(list[3]))
+        eval(list[0]).create_instance(list)
         File = open(file, 'a')
         string = ', '.join(list)
         File.write('\n' + string)
@@ -54,11 +55,7 @@ class Item:
         File = open(file)
         for line in File.readlines():
             item = line.split(', ')
-            if item[0] in Item.subclasses and item[0] != 'Sound':
-                eval(item[0])(item[0], item[1], item[2], int(item[3]))
-            elif item[0] in Item.subclasses and item[0] == 'Sound':
-                eval(item[0])(item[0], item[1], item[2],
-                              int(item[3]), int(item[4]))
+            eval(item[0]).create_instance(item)
 
     @staticmethod
     def delete_item():
@@ -138,10 +135,16 @@ class Item:
 
 class Sound(Item):
     instances = []
+    categories_to_prompt = Item.categories_to_prompt + \
+        ['Sound Pressure Level:']
 
     def __init__(self, subclass, type, model, quantity, spl=None):
         super().__init__(subclass, type, model, quantity)
         self.spl = spl
+
+    @classmethod
+    def create_instance(cls, list):
+        return cls(list[0], list[1], list[2], int(list[3]), int(list[4]))
 
     @staticmethod
     def show_spl_level():
@@ -161,18 +164,38 @@ class Sound(Item):
 
 class Light(Item):
     instances = []
+    categories_to_prompt = Item.categories_to_prompt + []
+
+    @classmethod
+    def create_instance(cls, list):
+        return cls(list[0], list[1], list[2], int(list[3]))
 
 
 class Stage(Item):
     instances = []
+    categories_to_prompt = Item.categories_to_prompt + []
+
+    @classmethod
+    def create_instance(cls, list):
+        return cls(list[0], list[1], list[2], int(list[3]))
 
 
 class Power(Item):
     instances = []
+    categories_to_prompt = Item.categories_to_prompt + []
+
+    @classmethod
+    def create_instance(cls, list):
+        return cls(list[0], list[1], list[2], int(list[3]))
 
 
 class Extra(Item):
     instances = []
+    categories_to_prompt = Item.categories_to_prompt + []
+
+    @classmethod
+    def create_instance(cls, list):
+        return cls(list[0], list[1], list[2], int(list[3]))
 
 
 def initialize():
