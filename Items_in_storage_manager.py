@@ -245,6 +245,7 @@ def get_user_choice(prompt_info):
     return user_choice
 
 
+# comment for test push
 file = 'C:\\Users\\User\\Dropbox\\Python\\my_projects\\items_in_store_manager\\item_list.txt'
 
 initialize()
