@@ -77,6 +77,9 @@ class Item:
                         Item.delete_item_from_file(items_in_file, item, file)
                     elif confirmation == 'n':
                         pass
+                    elif confirmation == 'menu':
+                        print('')
+                        show_action_options_and_execute_user_choice()
         Item.load_items_from_file()
 
     @staticmethod
