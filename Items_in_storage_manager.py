@@ -246,5 +246,5 @@ def get_user_choice(prompt_info):
 
 
 file = 'C:\\Users\\User\\Dropbox\\Python\\my_projects\\items_in_store_manager\\item_list.txt'
-
+# test
 initialize()
