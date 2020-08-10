@@ -47,7 +47,12 @@ class Storage:
         print('\n')
 
     def show_items_from_category(self):
-        pass
+        category = Interface.get_user_choice(
+            'Print items from category:').lower()
+        for item in Item.instances:
+            if category == item.category.lower():
+                print(f'({item.category})  {item.type} {item.model}')
+        print('\n')
 
     def delete_item(self):
         pass
