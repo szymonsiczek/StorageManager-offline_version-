@@ -15,7 +15,9 @@ class Storage:
         pass
 
     def show_all_items(self):
-        pass
+        for item in Item.instances:
+            print(f'({item.category})  {item.type} {item.model}', end='')
+        print('\n')
 
     def show_items_from_category(self):
         pass
@@ -57,7 +59,7 @@ class Interface:
         return option_list
 
     def start_program_interface(self, storage):
-        print('What would you like to do? Type a number. \n\n')
+        print('What would you like to do? Type a number.\n')
         self.show_action_options_and_execute_user_choice(storage)
 
     def show_action_options_and_execute_user_choice(self, storage):
