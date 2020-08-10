@@ -9,14 +9,41 @@ class Storage:
     def load_items_from_file(self):
         File = open(Storage.database_file, 'r')
         for line in File.readlines():
-            Item.instance_from_file(line)
+            line = line.rstrip('\n')
+            Item.instance_from_string(line)
 
     def add_item(self):
-        pass
+        # collect_new_item_data
+        new_items_data = []
+        add_more = True
+        while add_more == True:
+            new_item = Interface.get_user_choice(
+                'Please provide new item data in order: category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).')
+            if new_item.lower() != 'menu':
+                new_items_data.append(new_item)
+            else:
+                break
+            ask_for_more = Interface.get_user_choice(
+                'Would you like to add another item? Please type Y/N')
+            if ask_for_more.lower() == 'n':
+                add_more = False
+        # create_item_instance and write to database_file
+        for string in new_items_data:
+            data = string.split(', ')
+            quantity = int(data.pop(3))
+            string_data = ', '.join(data)
+            for i in range(1, (quantity + 1)):
+                Item.instance_from_string(string_data)
+                Item.write_to_database_file(string_data)
 
     def show_all_items(self):
+        print('')
+        items_to_show = []
         for item in Item.instances:
-            print(f'({item.category})  {item.type} {item.model}', end='')
+            items_to_show.append(
+                f'({item.category})  {item.type} {item.model}')
+        for item in sorted(items_to_show):
+            print(item)
         print('\n')
 
     def show_items_from_category(self):
@@ -39,9 +66,15 @@ class Item:
         Item.instances.append(self)
 
     @classmethod
-    def instance_from_file(cls, string):
+    def instance_from_string(cls, string):
         (category, type, model) = string.split(', ')
         cls(category, type, model)
+
+    @classmethod
+    def write_to_database_file(cls, string):
+        File = open(Storage.database_file, 'a')
+        File.write(string + '\n')
+        File.close()
 
 
 class Interface:
