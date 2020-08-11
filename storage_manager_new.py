@@ -30,12 +30,15 @@ class Storage:
                 add_more = False
         # create_item_instance and write to database_file
         for string in new_items_data:
-            data = string.split(', ')
-            quantity = int(data.pop(3))
-            string_data = ', '.join(data)
-            for i in range(1, (quantity + 1)):
-                Item.instance_from_string(string_data)
-                Item.write_to_database_file(string_data)
+            try:
+                data = string.split(', ')
+                quantity = int(data.pop(3))
+                string_data = ', '.join(data)
+                for i in range(1, (quantity + 1)):
+                    Item.create_instance_from_string_and_write_to_database_file(
+                        string_data)
+            except IndexError:
+                pass
 
     def show_all_items(self):
         print('')
@@ -108,7 +111,8 @@ class Item:
         cls(category, type, model)
 
     @classmethod
-    def write_to_database_file(cls, string):
+    def create_instance_from_string_and_write_to_database_file(cls, string):
+        Item.instance_from_string(string)
         File = open(Storage.database_file, 'a')
         File.write(string + '\n')
         File.close()

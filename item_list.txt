@@ -52,3 +52,5 @@ Light, Beam, Gladiator
 Light, Beam, Gladiator
 Light, Beam, Gladiator
 Light, Beam, Gladiator
+Light, Kablarka, DMX
+Power, Kablarka, pr¹dowa du¿a
