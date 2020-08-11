@@ -7,6 +7,7 @@ class Storage:
         self.name = name
 
     def load_items_from_file(self):
+        Item.instances = []
         File = open(Storage.database_file, 'r')
         for line in File.readlines():
             line = line.rstrip('\n')
@@ -55,7 +56,28 @@ class Storage:
         print('\n')
 
     def delete_item(self):
-        pass
+        File = open(Storage.database_file, 'r')
+        items_in_file = File.readlines()
+        File.close()
+        choice = Interface.get_user_choice(
+            'Which item would you like to delete? Please provide specific info about type or model.')
+        for item in items_in_file:
+            if choice.lower() in item.lower():
+                confirmation = None
+                while confirmation != 'y' and confirmation != 'n':
+                    confirmation = Interface.get_user_choice(
+                        'Please confirm (Y/N) that you want to delete item: ' + item).lower()
+                    if confirmation == 'y':
+                        items_in_file.remove(item)
+                        File = open(Storage.database_file, 'w')
+                        for line in items_in_file:
+                            File.write(line)
+                        File.close()
+                        initialize()
+                    elif confirmation == 'n':
+                        break
+                    elif confirmation == 'menu':
+                        break
 
     def delete_all_items(self):
         pass

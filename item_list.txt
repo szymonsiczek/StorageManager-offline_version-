@@ -12,3 +12,9 @@ Sound, Speaker, ARCS Focus
 Sound, Speaker, ARCS Focus
 Sound, Speaker, ARCS Focus
 Sound, Speaker, ARCS Focus
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
