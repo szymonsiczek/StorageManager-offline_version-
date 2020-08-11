@@ -40,11 +40,14 @@ class Storage:
     def show_all_items(self):
         print('')
         items_to_show = []
-        for item in Item.instances:
-            items_to_show.append(
-                f'({item.category})  {item.type} {item.model}')
-        for item in sorted(items_to_show):
-            print(item)
+        if Item.instances != []:
+            for item in Item.instances:
+                items_to_show.append(
+                    f'({item.category})  {item.type} {item.model}')
+            for item in sorted(items_to_show):
+                print(item)
+        else:
+            print('---\nList of items is empty\n---')
         print('\n')
 
     def show_items_from_category(self):
@@ -80,7 +83,14 @@ class Storage:
                         break
 
     def delete_all_items(self):
-        pass
+        delete_all_confirmation = Interface.get_user_choice(
+            'Please confirm (YES/NO) that you want to delete all items')
+        if delete_all_confirmation.lower() == 'yes':
+            File = open(Storage.database_file, 'w')
+            File.close()
+            initialize()
+        else:
+            pass
 
 
 class Item:

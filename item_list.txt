@@ -18,3 +18,37 @@ Sound, Speaker, JBL Vrx
 Sound, Speaker, JBL Vrx
 Sound, Speaker, JBL Vrx
 Sound, Speaker, JBL Vrx
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Stage, Podest, 2x1
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
