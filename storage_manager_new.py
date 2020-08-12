@@ -5,27 +5,29 @@ class Storage:
 
     def __init__(self, name):
         self.name = name
+        self.items = []
+        self.load_items_from_file()
 
     def load_items_from_file(self):
-        Item.instances = []
+        # Item.instances = []
         File = open(Storage.database_file, 'r')
         for line in File.readlines():
             line = line.rstrip('\n')
-            Item.instance_from_string(line)
+            self.items.append(Item.create_instance_from_string(line))
 
     def add_item(self):
         # collect_new_item_data
         new_items_data = []
         add_more = True
         while add_more == True:
-            new_item = Interface.get_user_choice(
-                'Please provide new item data in order: category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).')
+            new_item = input(
+                'Please provide new item data in order: category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).\n')
             if new_item.lower() != 'menu':
                 new_items_data.append(new_item)
             else:
                 break
-            ask_for_more = Interface.get_user_choice(
-                'Would you like to add another item? Please type Y/N')
+            ask_for_more = input(
+                'Would you like to add another item? Please type Y/N\n')
             if ask_for_more.lower() == 'n':
                 add_more = False
         # create_item_instance and write to database_file
@@ -35,7 +37,7 @@ class Storage:
                 quantity = int(data.pop(3))
                 string_data = ', '.join(data)
                 for i in range(1, (quantity + 1)):
-                    Item.create_instance_from_string_and_write_to_database_file(
+                    Item.create_create_instance_from_string_and_write_to_database_file(
                         string_data)
             except IndexError:
                 pass
@@ -54,8 +56,8 @@ class Storage:
         print('\n')
 
     def show_items_from_category(self):
-        category = Interface.get_user_choice(
-            'Print items from category:').lower()
+        category = input(
+            'Print items from category:\n').lower()
         for item in Item.instances:
             if category == item.category.lower():
                 print(f'({item.category})  {item.type} {item.model}')
@@ -65,14 +67,14 @@ class Storage:
         File = open(Storage.database_file, 'r')
         items_in_file = File.readlines()
         File.close()
-        choice = Interface.get_user_choice(
-            'Which item would you like to delete? Please provide specific info about type or model.')
+        choice = input(
+            'Which item would you like to delete? Please provide specific info about type or model.\n')
         for item in items_in_file:
             if choice.lower() in item.lower():
                 confirmation = None
                 while confirmation != 'y' and confirmation != 'n':
-                    confirmation = Interface.get_user_choice(
-                        'Please confirm (Y/N) that you want to delete item: ' + item).lower()
+                    confirmation = input(
+                        'Please confirm (Y/N) that you want to delete item: ' + item + '\n').lower()
                     if confirmation == 'y':
                         items_in_file.remove(item)
                         File = open(Storage.database_file, 'w')
@@ -86,8 +88,8 @@ class Storage:
                         break
 
     def delete_all_items(self):
-        delete_all_confirmation = Interface.get_user_choice(
-            'Please confirm (YES/NO) that you want to delete all items')
+        delete_all_confirmation = input(
+            'Please confirm (YES/NO) that you want to delete all items\n')
         if delete_all_confirmation.lower() == 'yes':
             File = open(Storage.database_file, 'w')
             File.close()
@@ -106,30 +108,32 @@ class Item:
         Item.instances.append(self)
 
     @classmethod
-    def instance_from_string(cls, string):
-        (category, type, model) = string.split(', ')
-        cls(category, type, model)
+    def create_instance_from_string(cls, stringified_item):
+        (category, type, model) = stringified_item.split(', ')
+        return cls(category, type, model)
 
     @classmethod
-    def create_instance_from_string_and_write_to_database_file(cls, string):
-        Item.instance_from_string(string)
+    def create_create_instance_from_string_and_write_to_database_file(cls, string):
+        Item.create_instance_from_string(string)
         File = open(Storage.database_file, 'a')
         File.write(string + '\n')
         File.close()
 
 
 class Interface:
-    def __init__(self, name, option_1, option_2, option_3, option_4, option_5):
+    option_dict = {}
+
+    def __init__(self, name):
         self.name = name
-        self.option_1 = option_1
-        self.option_2 = option_2
-        self.option_3 = option_3
-        self.option_4 = option_4
-        self.option_5 = option_5
+        self.add_item_option = 'Add item'
+        self.show_all_items_option = 'Show all items'
+        self.show_items_from_category_option = 'Show list of items from a certain category'
+        self.delete_item_option = 'Delete item'
+        self.delete_all_items_option = 'Delete all items'
 
     def menu_option_list(self):
-        option_list = [self.option_1, self.option_2,
-                       self.option_3, self.option_4, self.option_5]
+        option_list = [self.add_item_option, self.show_all_items_option,
+                       self.show_items_from_category_option, self.delete_item_option, self.delete_all_items_option]
         return option_list
 
     def start_program_interface(self, storage):
@@ -138,7 +142,7 @@ class Interface:
 
     def show_action_options_and_execute_user_choice(self, storage):
         menu = self.create_and_show_option_menu()
-        choice = Interface.get_user_choice(None)
+        choice = input()
         try:
             choice = int(choice)
         except:
@@ -169,19 +173,10 @@ class Interface:
             print(f'{number}. {action}')
         return option_dict
 
-    @staticmethod
-    def get_user_choice(prompt_info):
-        if prompt_info != None:
-            print('\n' + prompt_info)
-        user_choice = input()
-        return user_choice
-
 
 def initialize():
     main_storage = Storage('Main Storage')
-    main_storage.load_items_from_file()
-    main_menu = Interface('Main Menu', 'Add item', 'Show all items',
-                          'Show list of items from a certain category', 'Delete item', 'Delete all items')
+    main_menu = Interface('Main Menu')
     main_menu.start_program_interface(main_storage)
 
 
