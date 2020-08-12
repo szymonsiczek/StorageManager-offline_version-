@@ -18,8 +18,7 @@ class Storage:
     def add_item(self):
         # collect_new_item_data
         new_items_data = []
-        add_more = True
-        while add_more == True:
+        while True:
             new_item = input(
                 'Please provide new item data in order: category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).\n')
             if new_item.lower() != 'menu':
@@ -29,13 +28,13 @@ class Storage:
             ask_for_more = input(
                 'Would you like to add another item? Please type Y/N\n')
             if ask_for_more.lower() == 'n':
-                add_more = False
+                break
         # create_item_instance and write to database_file
         for string in new_items_data:
             try:
-                data = string.split(', ')
-                quantity = int(data.pop(3))
-                string_data = ', '.join(data)
+                list_from_string = string.split(', ')
+                quantity = int(list_from_string.pop(3))
+                string_data = ', '.join(list_from_string)
                 for i in range(1, (quantity + 1)):
                     Item.create_instance_from_string_and_write_to_database_file(
                         string_data)
@@ -68,13 +67,13 @@ class Storage:
         print('\n')
 
     def delete_item(self):
-        File = open(Storage.database_file, 'r')
+        File = open(self.database_file, 'r')
         items_in_file = File.readlines()
         File.close()
-        choice = input(
+        item_to_delete = input(
             'Which item would you like to delete? Please provide specific info about type or model.\n')
         for item in items_in_file:
-            if choice.lower() in item.lower():
+            if item_to_delete.lower() in item.lower():
                 confirmation = None
                 while confirmation != 'y' and confirmation != 'n':
                     confirmation = input(
@@ -85,9 +84,9 @@ class Storage:
                         for line in items_in_file:
                             File.write(line)
                         File.close()
+                        self.load_items_from_file()
                         print(f'{item}'.rstrip('\n') +
                               ' was removed successfully.\n')
-                        self.load_items_from_file()
                     elif confirmation == 'n':
                         break
                     elif confirmation == 'menu':
@@ -102,7 +101,7 @@ class Storage:
             print('\nAll items were successfully removed.\n')
             self.load_items_from_file()
         else:
-            pass
+            print('Deleting all items was aborted.')
 
 
 class Item:
@@ -125,7 +124,6 @@ class Item:
     def write_to_database_file(self):
         File = open(Storage.database_file, 'a')
         File.write(f'{self.category}, {self.type}, {self.model}\n')
-        # File.write(string + '\n')
         File.close()
 
 
@@ -146,11 +144,15 @@ class Interface:
         self.show_option_menu()
         self.execute_user_choice_from_menu(storage)
 
+    def show_option_menu(self):
+        for number, action in self.option_dict.items():
+            print(f'{number}. {action}')
+
     def execute_user_choice_from_menu(self, storage):
         choice = input()
         try:
             choice = int(choice)
-        except:
+        except ValueError:
             print('\nPlease pick number from the options printed above.\n')
             self.start_program_interface(storage)
         if choice in self.option_dict.keys():
@@ -167,10 +169,6 @@ class Interface:
         elif choice not in self.option_dict.keys():
             print('\nPlease pick number from the options printed above.\n')
             self.start_program_interface(storage)
-
-    def show_option_menu(self):
-        for number, action in self.option_dict.items():
-            print(f'{number}. {action}')
 
 
 def initialize():
