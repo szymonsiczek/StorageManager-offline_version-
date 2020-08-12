@@ -9,7 +9,7 @@ class Storage:
         self.load_items_from_file()
 
     def load_items_from_file(self):
-        # Item.instances = []
+        self.items = []
         File = open(Storage.database_file, 'r')
         for line in File.readlines():
             line = line.rstrip('\n')
@@ -41,12 +41,13 @@ class Storage:
                         string_data)
             except IndexError:
                 pass
+        self.load_items_from_file()
 
     def show_all_items(self):
         print('')
         items_to_show = []
-        if Item.instances != []:
-            for item in Item.instances:
+        if self.items != []:
+            for item in self.items:
                 items_to_show.append(
                     f'({item.category})  {item.type} {item.model}')
             for item in sorted(items_to_show):
@@ -58,7 +59,8 @@ class Storage:
     def show_items_from_category(self):
         category = input(
             'Print items from category:\n').lower()
-        for item in Item.instances:
+        print('')
+        for item in self.items:
             if category == item.category.lower():
                 print(f'({item.category})  {item.type} {item.model}')
         print('\n')
@@ -81,7 +83,7 @@ class Storage:
                         for line in items_in_file:
                             File.write(line)
                         File.close()
-                        initialize()
+                        self.load_items_from_file()
                     elif confirmation == 'n':
                         break
                     elif confirmation == 'menu':
@@ -93,19 +95,17 @@ class Storage:
         if delete_all_confirmation.lower() == 'yes':
             File = open(Storage.database_file, 'w')
             File.close()
-            initialize()
+            self.load_items_from_file()
         else:
             pass
 
 
 class Item:
-    instances = []
 
     def __init__(self, category, type, model):
         self.category = category
         self.type = type
         self.model = model
-        Item.instances.append(self)
 
     @classmethod
     def create_instance_from_string(cls, stringified_item):

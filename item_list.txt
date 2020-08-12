@@ -1,20 +1,16 @@
-Sound, Mixer, Midas M32
-Sound, Stagebox, DL32
-Power, Rodzielnia, 32A z miernikami poboru,
-Extra, Narzedziowka, Nowa narzedziowka
-Stage, Podest, 1x1
-Light, Followspot, Coemar
-Sound, Speaker, ARCS Wide
-Sound, Speaker, ARCS Wide
-Sound, Speaker, ARCS Wide
-Sound, Speaker, ARCS Wide
-Sound, Speaker, ARCS Focus
-Sound, Speaker, ARCS Focus
-Sound, Speaker, ARCS Focus
-Sound, Speaker, ARCS Focus
-Sound, Speaker, JBL Vrx
-Sound, Speaker, JBL Vrx
-Sound, Speaker, JBL Vrx
-Sound, Speaker, JBL Vrx
-Sound, Speaker, JBL Vrx
-Sound, Speaker, JBL Vrx
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
+Light, Beam, Gladiator
