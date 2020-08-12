@@ -14,3 +14,12 @@ Light, Beam, Gladiator
 Light, Beam, Gladiator
 Light, Beam, Gladiator
 Light, Beam, Gladiator
+Sound, Mixer, Midas M32
+Sound, Speaker, ARCS Wide
+Sound, Speaker, ARCS Wide
+Sound, Speaker, ARCS Wide
+Sound, Speaker, ARCS Wide
+Sound, Speaker, Arcs Focus
+Sound, Speaker, Arcs Focus
+Sound, Speaker, Arcs Focus
+Sound, Speaker, Arcs Focus

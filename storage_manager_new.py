@@ -13,6 +13,7 @@ class Storage:
         File = open(Storage.database_file, 'r')
         for line in File.readlines():
             line = line.rstrip('\n')
+            # Item function, is that ok?
             self.items.append(Item.create_instance_from_string(line))
 
     def add_item(self):
@@ -37,7 +38,7 @@ class Storage:
                 quantity = int(data.pop(3))
                 string_data = ', '.join(data)
                 for i in range(1, (quantity + 1)):
-                    Item.create_create_instance_from_string_and_write_to_database_file(
+                    Item.create_instance_from_string_and_write_to_database_file(
                         string_data)
             except IndexError:
                 pass
@@ -113,7 +114,7 @@ class Item:
         return cls(category, type, model)
 
     @classmethod
-    def create_create_instance_from_string_and_write_to_database_file(cls, string):
+    def create_instance_from_string_and_write_to_database_file(cls, string):
         Item.create_instance_from_string(string)
         File = open(Storage.database_file, 'a')
         File.write(string + '\n')
@@ -121,63 +122,52 @@ class Item:
 
 
 class Interface:
-    option_dict = {}
+    option_dict = {1: 'Add item', 2: 'Show all items',
+                   3: 'Show list of items from a certain category', 4: 'Delete item', 5: 'Delete all items'}
 
-    def __init__(self, name):
-        self.name = name
-        self.add_item_option = 'Add item'
-        self.show_all_items_option = 'Show all items'
-        self.show_items_from_category_option = 'Show list of items from a certain category'
-        self.delete_item_option = 'Delete item'
-        self.delete_all_items_option = 'Delete all items'
-
-    def menu_option_list(self):
-        option_list = [self.add_item_option, self.show_all_items_option,
-                       self.show_items_from_category_option, self.delete_item_option, self.delete_all_items_option]
-        return option_list
+    def __init__(self, name, storage):
+        self.storage = storage
+        self.start_program_interface(storage)
 
     def start_program_interface(self, storage):
-        print('What would you like to do? Type a number.\n')
-        self.show_action_options_and_execute_user_choice(storage)
+        while True:
+            print('What would you like to do? Type a number.\n')
+            self.show_option_menu_and_execute_user_choice(storage)
 
-    def show_action_options_and_execute_user_choice(self, storage):
-        menu = self.create_and_show_option_menu()
+    def show_option_menu_and_execute_user_choice(self, storage):
+        self.show_option_menu()
+        self.execute_user_choice(storage)
+
+    def execute_user_choice(self, storage):
         choice = input()
         try:
             choice = int(choice)
         except:
             print('\nPlease pick number from the options printed above.\n')
             self.start_program_interface(storage)
-        if choice in menu.keys():
+        if choice in self.option_dict.keys():
             if choice == 1:
-                storage.add_item()
+                self.storage.add_item()
             elif choice == 2:
-                storage.show_all_items()
+                self.storage.show_all_items()
             elif choice == 3:
-                storage.show_items_from_category()
+                self.storage.show_items_from_category()
             elif choice == 4:
-                storage.delete_item()
+                self.storage.delete_item()
             elif choice == 5:
-                storage.delete_all_items()
-        elif choice not in menu.keys():
+                self.storage.delete_all_items()
+        elif choice not in self.option_dict.keys():
             print('\nPlease pick number from the options printed above.\n')
             self.start_program_interface(storage)
-        self.start_program_interface(storage)
 
-    def create_and_show_option_menu(self):
-        option_dict = {}
-        for action in self.menu_option_list():
-            option_dict.update(
-                {(self.menu_option_list().index(action) + 1): action})
-        for number, action in option_dict.items():
+    def show_option_menu(self):
+        for number, action in self.option_dict.items():
             print(f'{number}. {action}')
-        return option_dict
 
 
 def initialize():
-    main_storage = Storage('Main Storage')
-    main_menu = Interface('Main Menu')
-    main_menu.start_program_interface(main_storage)
+    storage = Storage('Main Storage')
+    menu = Interface('Main Menu', storage)
 
 
 initialize()
