@@ -13,7 +13,6 @@ class Storage:
         File = open(Storage.database_file, 'r')
         for line in File.readlines():
             line = line.rstrip('\n')
-            # Item function, is that ok?
             self.items.append(Item.create_instance_from_string(line))
 
     def add_item(self):
@@ -40,8 +39,10 @@ class Storage:
                 for i in range(1, (quantity + 1)):
                     Item.create_instance_from_string_and_write_to_database_file(
                         string_data)
+                    print(f'{string_data} was added successfully.')
             except IndexError:
                 pass
+        print('')
         self.load_items_from_file()
 
     def show_all_items(self):
@@ -77,13 +78,15 @@ class Storage:
                 confirmation = None
                 while confirmation != 'y' and confirmation != 'n':
                     confirmation = input(
-                        'Please confirm (Y/N) that you want to delete item: ' + item + '\n').lower()
+                        '\nPlease confirm (Y/N) that you want to delete item: ' + item).lower()
                     if confirmation == 'y':
                         items_in_file.remove(item)
                         File = open(Storage.database_file, 'w')
                         for line in items_in_file:
                             File.write(line)
                         File.close()
+                        print(f'{item}'.rstrip('\n') +
+                              ' was removed successfully.\n')
                         self.load_items_from_file()
                     elif confirmation == 'n':
                         break
@@ -96,6 +99,7 @@ class Storage:
         if delete_all_confirmation.lower() == 'yes':
             File = open(Storage.database_file, 'w')
             File.close()
+            print('\nAll items were successfully removed.\n')
             self.load_items_from_file()
         else:
             pass
@@ -109,15 +113,19 @@ class Item:
         self.model = model
 
     @classmethod
+    def create_instance_from_string_and_write_to_database_file(cls, string):
+        instance = Item.create_instance_from_string(string)
+        instance.write_to_database_file()
+
+    @classmethod
     def create_instance_from_string(cls, stringified_item):
         (category, type, model) = stringified_item.split(', ')
         return cls(category, type, model)
 
-    @classmethod
-    def create_instance_from_string_and_write_to_database_file(cls, string):
-        Item.create_instance_from_string(string)
+    def write_to_database_file(self):
         File = open(Storage.database_file, 'a')
-        File.write(string + '\n')
+        File.write(f'{self.category}, {self.type}, {self.model}\n')
+        # File.write(string + '\n')
         File.close()
 
 
@@ -132,13 +140,13 @@ class Interface:
     def start_program_interface(self, storage):
         while True:
             print('What would you like to do? Type a number.\n')
-            self.show_option_menu_and_execute_user_choice(storage)
+            self.show_option_menu_and_execute_user_choice_from_menu(storage)
 
-    def show_option_menu_and_execute_user_choice(self, storage):
+    def show_option_menu_and_execute_user_choice_from_menu(self, storage):
         self.show_option_menu()
-        self.execute_user_choice(storage)
+        self.execute_user_choice_from_menu(storage)
 
-    def execute_user_choice(self, storage):
+    def execute_user_choice_from_menu(self, storage):
         choice = input()
         try:
             choice = int(choice)
@@ -167,7 +175,7 @@ class Interface:
 
 def initialize():
     storage = Storage('Main Storage')
-    menu = Interface('Main Menu', storage)
+    Interface('Main Menu', storage)
 
 
 initialize()

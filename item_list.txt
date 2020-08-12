@@ -1,25 +1,50 @@
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
-Light, Beam, Gladiator
 Sound, Mixer, Midas M32
+Sound, Stagebox, DL32
+Power, Rodzielnia, 32A z miernikami poboru,
+Extra, Narzedziowka, Nowa narzedziowka
+Stage, Podest, 1x1
+Light, Followspot, Coemar
 Sound, Speaker, ARCS Wide
 Sound, Speaker, ARCS Wide
 Sound, Speaker, ARCS Wide
 Sound, Speaker, ARCS Wide
-Sound, Speaker, Arcs Focus
-Sound, Speaker, Arcs Focus
-Sound, Speaker, Arcs Focus
-Sound, Speaker, Arcs Focus
+Sound, Speaker, ARCS Focus
+Sound, Speaker, ARCS Focus
+Sound, Speaker, ARCS Focus
+Sound, Speaker, ARCS Focus
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
+Sound, Speaker, JBL Vrx
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Stage, Podest, Alustage 2x1
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
+Light, Naswietlacz, Solar27Q
