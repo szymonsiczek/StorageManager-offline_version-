@@ -6,10 +6,10 @@ class Storage:
     def __init__(self, name):
         self.name = name
         self.items = []
-        self.load_items_from_file()
+        self.clear_self_items_list_and_load_items_from_file()
 
-    def load_items_from_file(self):
-        self.items = []
+    def clear_self_items_list_and_load_items_from_file(self):
+        self.items.clear()
         File = open(Storage.database_file, 'r')
         for line in File.readlines():
             line = line.rstrip('\n')
@@ -42,7 +42,7 @@ class Storage:
             except IndexError:
                 pass
         print('')
-        self.load_items_from_file()
+        self.clear_self_items_list_and_load_items_from_file()
 
     def show_all_items(self):
         print('')
@@ -84,7 +84,7 @@ class Storage:
                         for line in items_in_file:
                             File.write(line)
                         File.close()
-                        self.load_items_from_file()
+                        self.clear_self_items_list_and_load_items_from_file()
                         print(f'{item}'.rstrip('\n') +
                               ' was removed successfully.\n')
                     elif confirmation == 'n':
@@ -99,7 +99,7 @@ class Storage:
             File = open(Storage.database_file, 'w')
             File.close()
             print('\nAll items were successfully removed.\n')
-            self.load_items_from_file()
+            self.clear_self_items_list_and_load_items_from_file()
         else:
             print('Deleting all items was aborted.')
 
