@@ -16,7 +16,7 @@ class Storage:
             self.items.append(Item.create_instance_from_string(line))
 
     def add_item(self):
-        # collect_new_item_data
+        # Collect new item data
         new_items_data = []
         while True:
             new_item = input(
@@ -29,7 +29,7 @@ class Storage:
                 'Would you like to add another item? Please type Y/N\n')
             if ask_for_more.lower() == 'n':
                 break
-        # create_item_instance and write to database_file
+        # Create item instance and write to database file
         for string in new_items_data:
             try:
                 list_from_string = string.split(', ')
@@ -75,10 +75,10 @@ class Storage:
         for item in items_in_file:
             if item_to_delete.lower() in item.lower():
                 confirmation = None
-                while confirmation != 'y' and confirmation != 'n':
+                while confirmation not in ('yes', 'no', 'menu'):
                     confirmation = input(
-                        '\nPlease confirm (Y/N) that you want to delete item: ' + item).lower()
-                    if confirmation == 'y':
+                        '\nPlease confirm (YES/NO) that you want to delete item: ' + item).lower()
+                    if confirmation == 'yes':
                         items_in_file.remove(item)
                         File = open(Storage.database_file, 'w')
                         for line in items_in_file:
@@ -87,7 +87,7 @@ class Storage:
                         self.clear_self_items_list_and_load_items_from_file()
                         print(f'{item}'.rstrip('\n') +
                               ' was removed successfully.\n')
-                    elif confirmation == 'n':
+                    elif confirmation == 'no':
                         break
                     elif confirmation == 'menu':
                         break
