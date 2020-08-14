@@ -30,18 +30,13 @@ class Storage:
         except (IndexError, ValueError):
             return False
 
-    def show_all_items(self):
-        print('')
-        items_to_show = []
+    def return_all_items_as_list_of_attributes(self):
+        all_items_as_string_from_attributes = []
         if self.items != []:
             for item in self.items:
-                items_to_show.append(
+                all_items_as_string_from_attributes.append(
                     f'({item.category})  {item.type} {item.model}')
-            for item in sorted(items_to_show):
-                print(item)
-        else:
-            print('---\nList of items is empty\n---')
-        print('\n')
+        return all_items_as_string_from_attributes
 
     def find_items_by_category_or_type(self, category_or_type):
         items_from_specified_category = []
@@ -181,6 +176,17 @@ class Interface:
             self.storage.delete_all_items()
             self.inform_user('All items were successfully removed.')
 
+    def start_process_of_showing_all_items(self):
+        print('')
+        print('----')
+        all_items_as_list = self.storage.return_all_items_as_list_of_attributes()
+        if all_items_as_list != []:
+            for item in all_items_as_list:
+                print(item)
+        else:
+            self.inform_user('List of items is empty.')
+        print('----')
+
     def start_program_interface(self):
         while True:
             self.inform_user('What would you like to do? Type a number.')
@@ -206,7 +212,8 @@ class Interface:
             if choice == 1:
                 self.start_process_of_adding_items()
             elif choice == 2:
-                self.storage.show_all_items()
+                self.start_process_of_showing_all_items()
+                # self.storage.show_all_items()
             elif choice == 3:
                 self.start_process_of_showing_items_by_category_or_type()
             elif choice == 4:
