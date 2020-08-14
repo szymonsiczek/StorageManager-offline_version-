@@ -43,14 +43,12 @@ class Storage:
             print('---\nList of items is empty\n---')
         print('\n')
 
-    def show_items_from_category(self):
-        category = input(
-            'Print items from category:\n').lower()
-        print('')
+    def find_items_from_category(self, category):
+        items_from_specified_category = []
         for item in self.items:
-            if category == item.category.lower():
-                print(f'({item.category})  {item.type} {item.model}')
-        print('\n')
+            if category.lower().strip() == item.category.lower():
+                items_from_specified_category.append(item)
+        return items_from_specified_category
 
     def delete_item(self):
         File = open(self.database_file, 'r')
@@ -119,18 +117,16 @@ class Interface:
 
     def __init__(self, name, storage):
         self.storage = storage
-        self.start_program_interface(storage)
+        self.start_program_interface()
 
-    def start_add_item_process(self, storage):
+    def start_process_of_adding_items(self):
         while True:
             new_item_string_data = self.collect_data(
                 'Please provide new item data in order: '
                 'category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).\n'
             )
-            if new_item_string_data.lower() == 'menu':
-                break
-            else:
-                adding_new_item = self.storage.add_item(new_item_string_data)
+            self.break_if_data_is_menu(new_item_string_data)
+            adding_new_item = self.storage.add_item(new_item_string_data)
             if adding_new_item == True:
                 self.inform_user('\nNew item was added')
             else:
@@ -142,44 +138,57 @@ class Interface:
             if add_another_item.lower() != 'yes':
                 break
 
-    def start_program_interface(self, storage):
+    def start_process_of_showing_items_from_category(self):
+        category = self.collect_data('\nPrint items from category:\n')
+        self.break_if_data_is_menu(category)
+        items_in_specified_category = self.storage.find_items_from_category(
+            category)
+        print('')
+        for item in items_in_specified_category:
+            print(f'({item.category})  {item.type} {item.model}')
+        print('')
+
+    def start_program_interface(self):
         while True:
             print('\nWhat would you like to do? Type a number.\n')
-            self.show_option_menu_and_execute_user_choice_from_menu(storage)
+            self.show_option_menu_and_execute_user_choice_from_menu()
 
-    def show_option_menu_and_execute_user_choice_from_menu(self, storage):
+    def show_option_menu_and_execute_user_choice_from_menu(self):
         self.show_option_menu()
-        self.execute_user_choice_from_menu(storage)
+        self.execute_user_choice_from_menu()
 
     def show_option_menu(self):
         for number, action in self.option_dict.items():
             print(f'{number}. {action}')
 
-    def execute_user_choice_from_menu(self, storage):
+    def execute_user_choice_from_menu(self):
         choice = input()
         try:
             choice = int(choice)
         except ValueError:
             print('\nPlease pick number from the options printed above.\n')
-            self.start_program_interface(storage)
+            self.start_program_interface()
         if choice in self.option_dict.keys():
             if choice == 1:
-                self.start_add_item_process(storage)
-                # self.storage.add_item()
+                self.start_process_of_adding_items()
             elif choice == 2:
                 self.storage.show_all_items()
             elif choice == 3:
-                self.storage.show_items_from_category()
+                self.start_process_of_showing_items_from_category()
             elif choice == 4:
                 self.storage.delete_item()
             elif choice == 5:
                 self.storage.delete_all_items()
         elif choice not in self.option_dict.keys():
             print('\nPlease pick number from the options printed above.\n')
-            self.start_program_interface(storage)
+            self.start_program_interface()
+
+    def break_if_data_is_menu(self, data):
+        if data.lower() == 'menu':
+            self.start_program_interface()
 
     @staticmethod
-    def collect_data(info_to_prompt):
+    def collect_data(info_to_prompt=None):
         data = input(info_to_prompt)
         return data
 
@@ -195,8 +204,8 @@ class Interface:
 
 
 def initialize():
-    storage = Storage('Main Storage')
-    Interface('Main Menu', storage)
+    my_storage = Storage('Main Storage')
+    Interface('Main Menu', my_storage)
 
 
 initialize()
