@@ -30,17 +30,20 @@ class Storage:
             if ask_for_more.lower() == 'n':
                 break
         # Create item instance and write to database file
-        for string in new_items_data:
+        for string_with_new_item_data in new_items_data:
             try:
-                list_from_string = string.split(', ')
-                quantity = int(list_from_string.pop(3))
-                string_data = ', '.join(list_from_string)
+                list_from_string_with_new_item_data = string_with_new_item_data.split(
+                    ', ')
+                quantity = int(list_from_string_with_new_item_data.pop(3))
+                new_item_data_without_quantity = ', '.join(
+                    list_from_string_with_new_item_data)
                 for i in range(1, (quantity + 1)):
                     Item.create_instance_from_string_and_write_to_database_file(
-                        string_data)
-                    print(f'{string_data} was added successfully.')
-            except IndexError:
-                pass
+                        new_item_data_without_quantity)
+                    print(
+                        f'{new_item_data_without_quantity} was added successfully.')
+            except (IndexError, ValueError):
+                print('Error: adding item  was cancelled, please try again.')
         print('')
         self.clear_self_items_list_and_load_items_from_file()
 
@@ -112,8 +115,8 @@ class Item:
         self.model = model
 
     @classmethod
-    def create_instance_from_string_and_write_to_database_file(cls, string):
-        instance = Item.create_instance_from_string(string)
+    def create_instance_from_string_and_write_to_database_file(cls, stringified_item):
+        instance = Item.create_instance_from_string(stringified_item)
         instance.write_to_database_file()
 
     @classmethod
