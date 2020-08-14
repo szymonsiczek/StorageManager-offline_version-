@@ -15,37 +15,20 @@ class Storage:
             line = line.rstrip('\n')
             self.items.append(Item.create_instance_from_string(line))
 
-    def add_item(self):
-        # Collect new item data
-        new_items_data = []
-        while True:
-            new_item = input(
-                'Please provide new item data in order: category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).\n')
-            if new_item.lower() != 'menu':
-                new_items_data.append(new_item)
-            else:
-                break
-            ask_for_more = input(
-                'Would you like to add another item? Please type Y/N\n')
-            if ask_for_more.lower() == 'n':
-                break
-        # Create item instance and write to database file
-        for string_with_new_item_data in new_items_data:
-            try:
-                list_from_string_with_new_item_data = string_with_new_item_data.split(
-                    ', ')
-                quantity = int(list_from_string_with_new_item_data.pop(3))
-                new_item_data_without_quantity = ', '.join(
-                    list_from_string_with_new_item_data)
-                for i in range(1, (quantity + 1)):
-                    Item.create_instance_from_string_and_write_to_database_file(
-                        new_item_data_without_quantity)
-                    print(
-                        f'{new_item_data_without_quantity} was added successfully.')
-            except (IndexError, ValueError):
-                print('Error: adding item  was cancelled, please try again.')
-        print('')
-        self.clear_self_items_list_and_load_items_from_file()
+    def add_item(self, string_with_new_item_data):
+        try:
+            list_from_string_with_new_item_data = string_with_new_item_data.split(
+                ', ')
+            quantity = int(list_from_string_with_new_item_data.pop(3))
+            new_item_data_without_quantity = ', '.join(
+                list_from_string_with_new_item_data)
+            for i in range(1, (quantity + 1)):
+                Item.create_instance_from_string_and_write_to_database_file(
+                    new_item_data_without_quantity)
+            self.clear_self_items_list_and_load_items_from_file()
+            return True
+        except (IndexError, ValueError):
+            return False
 
     def show_all_items(self):
         print('')
@@ -138,9 +121,30 @@ class Interface:
         self.storage = storage
         self.start_program_interface(storage)
 
+    def start_add_item_process(self, storage):
+        while True:
+            new_item_string_data = self.collect_data(
+                'Please provide new item data in order: '
+                'category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).\n'
+            )
+            if new_item_string_data.lower() == 'menu':
+                break
+            else:
+                adding_new_item = self.storage.add_item(new_item_string_data)
+            if adding_new_item == True:
+                self.inform_user('\nNew item was added')
+            else:
+                self.inform_user(
+                    '\nAdding item was cancelled because of an error, please try again.')
+                break
+            add_another_item = self.get_user_decision(
+                '\nWould you like to add another item? Please type yes/no.')
+            if add_another_item.lower() != 'yes':
+                break
+
     def start_program_interface(self, storage):
         while True:
-            print('What would you like to do? Type a number.\n')
+            print('\nWhat would you like to do? Type a number.\n')
             self.show_option_menu_and_execute_user_choice_from_menu(storage)
 
     def show_option_menu_and_execute_user_choice_from_menu(self, storage):
@@ -160,7 +164,8 @@ class Interface:
             self.start_program_interface(storage)
         if choice in self.option_dict.keys():
             if choice == 1:
-                self.storage.add_item()
+                self.start_add_item_process(storage)
+                # self.storage.add_item()
             elif choice == 2:
                 self.storage.show_all_items()
             elif choice == 3:
@@ -172,6 +177,21 @@ class Interface:
         elif choice not in self.option_dict.keys():
             print('\nPlease pick number from the options printed above.\n')
             self.start_program_interface(storage)
+
+    @staticmethod
+    def collect_data(info_to_prompt):
+        data = input(info_to_prompt)
+        return data
+
+    @staticmethod
+    def get_user_decision(decision_to_make):
+        print(decision_to_make)
+        user_decision = input()
+        return user_decision
+
+    @staticmethod
+    def inform_user(info_string):
+        print(info_string)
 
 
 def initialize():
