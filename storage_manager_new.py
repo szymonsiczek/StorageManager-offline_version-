@@ -75,15 +75,9 @@ class Storage:
         self.clear_self_items_list_and_load_items_from_file()
 
     def delete_all_items(self):
-        delete_all_confirmation = input(
-            'Please confirm (YES/NO) that you want to delete all items\n')
-        if delete_all_confirmation.lower() == 'yes':
-            File = open(Storage.database_file, 'w')
-            File.close()
-            print('\nAll items were successfully removed.\n')
-            self.clear_self_items_list_and_load_items_from_file()
-        else:
-            print('Deleting all items was aborted.')
+        File = open(Storage.database_file, 'w')
+        File.close()
+        self.clear_self_items_list_and_load_items_from_file()
 
 
 class Item:
@@ -182,9 +176,14 @@ class Interface:
                     self.storage.delete_items(founded_items)
                     self.inform_user('Deleting was successfull.')
 
+    def start_process_of_deleting_all_items(self):
+        if self.get_confirmation('Are you sure that you want to delete all items?') == True:
+            self.storage.delete_all_items()
+            self.inform_user('All items were successfully removed.')
+
     def start_program_interface(self):
         while True:
-            print('\nWhat would you like to do? Type a number.\n')
+            self.inform_user('What would you like to do? Type a number.')
             self.show_option_menu_and_execute_user_choice_from_menu()
 
     def show_option_menu_and_execute_user_choice_from_menu(self):
@@ -200,7 +199,8 @@ class Interface:
         try:
             choice = int(choice)
         except ValueError:
-            print('\nPlease pick number from the options printed above.\n')
+            self.inform_user(
+                'Please pick number from the options printed above.')
             self.start_program_interface()
         if choice in self.option_dict.keys():
             if choice == 1:
@@ -212,9 +212,10 @@ class Interface:
             elif choice == 4:
                 self.start_process_of_deleting_items()
             elif choice == 5:
-                self.storage.delete_all_items()
+                self.start_process_of_deleting_all_items()
         elif choice not in self.option_dict.keys():
-            print('\nPlease pick number from the options printed above.\n')
+            self.inform_user(
+                'Please pick number from the options printed above.')
             self.start_program_interface()
 
     def break_if_data_is_menu(self, data):
@@ -231,7 +232,7 @@ class Interface:
         user_decision = input().lower()
         if user_decision == 'yes':
             return True
-        elif user_decision == 'no':
+        elif user_decision != 'yes':
             self.start_program_interface()
 
     @staticmethod
