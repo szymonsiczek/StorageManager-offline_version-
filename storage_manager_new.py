@@ -30,14 +30,6 @@ class Storage:
         except (IndexError, ValueError):
             return False
 
-    def return_all_items_as_list_of_attributes(self):
-        all_items_as_string_from_attributes = []
-        if self.items:
-            for item in self.items:
-                all_items_as_string_from_attributes.append(
-                    f'({item.category})  {item.type} {item.model}')
-        return all_items_as_string_from_attributes
-
     def find_items_by_category_or_type(self, category_or_type):
         items_from_specified_category = []
         for item in self.items:
@@ -81,6 +73,9 @@ class Item:
         self.category = category
         self.type = type
         self.model = model
+
+    def __str__(self):
+        return f'({self.category})  {self.type} {self.model}'
 
     @classmethod
     def create_instance_from_string_and_write_to_database_file(cls, stringified_item):
@@ -127,8 +122,8 @@ class Interface:
     def start_process_of_showing_all_items(self):
         print('')
         print('----')
-        all_items_as_list = self.storage.return_all_items_as_list_of_attributes()
-        if all_items_as_list != []:
+        all_items_as_list = [str(item) for item in self.storage.items]
+        if all_items_as_list:
             for item in sorted(all_items_as_list):
                 print(item)
         else:
@@ -143,9 +138,9 @@ class Interface:
             category_or_type)
         print('')
         print('----')
-        if items_in_specified_category != []:
+        if items_in_specified_category:
             for item in items_in_specified_category:
-                print(f'({item.category})  {item.type} {item.model}')
+                print(item)
         else:
             self.inform_user(
                 f'Couldn\'t find any item from category/type {category_or_type}')
