@@ -32,7 +32,7 @@ class Storage:
 
     def return_all_items_as_list_of_attributes(self):
         all_items_as_string_from_attributes = []
-        if self.items != []:
+        if self.items:
             for item in self.items:
                 all_items_as_string_from_attributes.append(
                     f'({item.category})  {item.type} {item.model}')
@@ -124,6 +124,17 @@ class Interface:
             if add_another_item == False:
                 break
 
+    def start_process_of_showing_all_items(self):
+        print('')
+        print('----')
+        all_items_as_list = self.storage.return_all_items_as_list_of_attributes()
+        if all_items_as_list != []:
+            for item in sorted(all_items_as_list):
+                print(item)
+        else:
+            self.inform_user('List of items is empty.')
+        print('----')
+
     def start_process_of_showing_items_by_category_or_type(self):
         category_or_type = self.collect_data(
             '\nPrint items from category or type:\n')
@@ -153,19 +164,34 @@ class Interface:
             self.inform_user(
                 f'\nNumber of founded items: {len(founded_items)}')
             print('----')
-            for item in founded_items:
-                print(item.rstrip('\n'))
+            for number, item in enumerate(sorted(founded_items)):
+                print(str(number + 1) + ': ' + item.rstrip('\n'))
             print('----')
             if len(founded_items) > 1:
+                founded_items_dict = {number + 1: item for number,
+                                      item in enumerate(sorted(founded_items))}
                 item_to_delete = self.collect_data(
-                    '\nWhich item would you like to delete? '
-                    'Please provide specific info about type or model.'
-                    ' (Or type ALL to delete all of them)\n')
+                    '\nWhich items would you like to delete? '
+                    'Please type their numbers from list above '
+                    '(with commas and spaces, like: 1, 3, 6, 9).'
+                    '\nType ALL to delete all items froms the list above.\n')
                 self.break_if_data_is_menu(item_to_delete)
                 if item_to_delete.lower() == 'all':
                     if self.get_confirmation('Are you sure?') == True:
                         self.storage.delete_items(founded_items)
                         self.inform_user('Deleting was successfull.')
+                else:
+                    try:
+                        numbers_of_items_to_delete = [
+                            int(num) for num in item_to_delete.split(', ')]
+                        final_items_to_delete = [founded_items_dict.get(
+                            number) for number in numbers_of_items_to_delete]
+                        self.storage.delete_items(final_items_to_delete)
+                        self.inform_user('Deleting was successfull.')
+                    except ValueError:
+                        self.inform_user(
+                            'There was an error, please try again'
+                            ' (make sure to type list of numbers with commas and spaces, like: 1, 3, 6, 9).')
             elif len(founded_items) == 1:
                 if self.get_confirmation('Are you sure?') == True:
                     self.storage.delete_items(founded_items)
@@ -175,17 +201,6 @@ class Interface:
         if self.get_confirmation('Are you sure that you want to delete all items?') == True:
             self.storage.delete_all_items()
             self.inform_user('All items were successfully removed.')
-
-    def start_process_of_showing_all_items(self):
-        print('')
-        print('----')
-        all_items_as_list = self.storage.return_all_items_as_list_of_attributes()
-        if all_items_as_list != []:
-            for item in all_items_as_list:
-                print(item)
-        else:
-            self.inform_user('List of items is empty.')
-        print('----')
 
     def start_program_interface(self):
         while True:
@@ -213,7 +228,6 @@ class Interface:
                 self.start_process_of_adding_items()
             elif choice == 2:
                 self.start_process_of_showing_all_items()
-                # self.storage.show_all_items()
             elif choice == 3:
                 self.start_process_of_showing_items_by_category_or_type()
             elif choice == 4:
