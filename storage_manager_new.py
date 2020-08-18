@@ -50,10 +50,8 @@ class Storage:
         File = open(self.database_file, 'r')
         items_in_database_file = File.readlines()
         File.close()
-        founded_items = []
-        for item in items_in_database_file:
-            if info_about_item.lower() in item.lower():
-                founded_items.append(item)
+        founded_items = [
+            item for item in items_in_database_file if info_about_item.lower() in item.lower()]
         return founded_items
 
     def delete_items(self, list_of_items_to_delete):
@@ -62,7 +60,7 @@ class Storage:
         File.close()
         for item in list_of_items_to_delete:
             items_in_file.remove(item)
-            File = open(Storage.database_file, 'w')
+            File = open(self.database_file, 'w')
             for line in items_in_file:
                 File.write(line)
             File.close()
@@ -149,7 +147,26 @@ class Interface:
             '\nWhich item would you like to delete? '
             'Please provide specific info about type, model or category.\n')
         self.back_to_interface_if_data_is_menu(item_to_delete)
+
         founded_items = self.storage.find_specific_item(item_to_delete)
+        self.show_searching_results(founded_items)
+
+        if len(founded_items) == 1:
+            self.deleting_one_item(founded_items)
+
+        if len(founded_items) > 1:
+            founded_items_dict = {number + 1: item for number,
+                                  item in enumerate(founded_items)}
+            item_to_delete = self.get_specific_info_about_items_to_delete()
+
+            if item_to_delete.lower() == 'all':
+                self.delete_all_items_from_list(founded_items)
+
+            if item_to_delete != 'all':
+                self.delete_one_or_few_items(
+                    item_to_delete, founded_items_dict)
+
+    def show_searching_results(self, founded_items):
         if not founded_items:
             self.inform_user('Item was not founded.')
         else:
@@ -160,35 +177,38 @@ class Interface:
             for number, item in enumerate(founded_items):
                 print(str(number + 1) + ': ' + item.rstrip('\n'))
             print('----')
-            if len(founded_items) > 1:
-                founded_items_dict = {number + 1: item for number,
-                                      item in enumerate(founded_items)}
-                item_to_delete = self.collect_data(
-                    '\nWhich items would you like to delete? '
-                    'Please type their numbers from list above '
-                    '(with commas and spaces, like: 1, 3, 6, 9).'
-                    '\nType ALL to delete all items froms the list above.\n')
-                self.back_to_interface_if_data_is_menu(item_to_delete)
-                if item_to_delete.lower() == 'all':
-                    if self.get_confirmation('Are you sure?'):
-                        self.storage.delete_items(founded_items)
-                        self.inform_user('Deleting was successfull.')
-                else:
-                    try:
-                        numbers_of_items_to_delete = [
-                            int(num) for num in item_to_delete.split(', ')]
-                        final_items_to_delete = [founded_items_dict.get(
-                            number) for number in numbers_of_items_to_delete]
-                        self.storage.delete_items(final_items_to_delete)
-                        self.inform_user('Deleting was successfull.')
-                    except ValueError:
-                        self.inform_user(
-                            'There was an error, please try again'
-                            ' (make sure to type list of numbers with commas and spaces, like: 1, 3, 6, 9).')
-            elif len(founded_items) == 1:
-                if self.get_confirmation('Are you sure?'):
-                    self.storage.delete_items(founded_items)
-                    self.inform_user('Deleting was successfull.')
+
+    def deleting_one_item(self, founded_item):
+        if self.get_confirmation('Are you sure?'):
+            self.storage.delete_items(founded_item)
+            self.inform_user('Deleting was successfull.')
+
+    def get_specific_info_about_items_to_delete(self):
+        item_to_delete = self.collect_data(
+            '\nWhich items would you like to delete? '
+            'Please type their numbers from list above '
+            '(with commas and spaces, like: 1, 3, 6, 9).'
+            '\nType ALL to delete all items froms the list above.\n')
+        self.back_to_interface_if_data_is_menu(item_to_delete)
+        return item_to_delete
+
+    def delete_all_items_from_list(self, founded_items):
+        if self.get_confirmation('Are you sure?'):
+            self.storage.delete_items(founded_items)
+            self.inform_user('Deleting was successfull.')
+
+    def delete_one_or_few_items(self, item_to_delete, founded_items_dict):
+        try:
+            numbers_of_items_to_delete = [
+                int(num) for num in item_to_delete.split(', ')]
+            final_items_to_delete = [founded_items_dict.get(
+                number) for number in numbers_of_items_to_delete]
+            self.storage.delete_items(final_items_to_delete)
+            self.inform_user('Deleting was successfull.')
+        except ValueError:
+            self.inform_user(
+                'There was an error, please try again'
+                ' (make sure to type list of numbers with commas and spaces, like: 1, 3, 6, 9).')
 
     def start_process_of_deleting_all_items(self):
         if self.get_confirmation('Are you sure that you want to delete all items?'):
