@@ -1,3 +1,4 @@
+from operator import attrgetter
 
 
 class Storage:
@@ -111,15 +112,16 @@ class Interface:
                 self.inform_user(
                     'Adding item was cancelled because of an error, please try again.')
                 break
-            add_another_item_result = self.get_confirmation(
+            self.get_confirmation(
                 'Would you like to add another item?')
 
     def start_process_of_showing_all_items(self):
         print('')
         print('----')
-        all_items_as_list = [str(item) for item in self.storage.items]
+        all_items_as_list = sorted(
+            self.storage.items, key=attrgetter('category', 'type', 'model'))
         if all_items_as_list:
-            for item in sorted(all_items_as_list):
+            for item in all_items_as_list:
                 print(item)
         else:
             self.inform_user('List of items is empty.')
@@ -154,12 +156,13 @@ class Interface:
             self.inform_user(
                 f'\nNumber of founded items: {len(founded_items)}')
             print('----')
-            for number, item in enumerate(sorted(founded_items)):
+            founded_items.sort()
+            for number, item in enumerate(founded_items):
                 print(str(number + 1) + ': ' + item.rstrip('\n'))
             print('----')
             if len(founded_items) > 1:
                 founded_items_dict = {number + 1: item for number,
-                                      item in enumerate(sorted(founded_items))}
+                                      item in enumerate(founded_items)}
                 item_to_delete = self.collect_data(
                     '\nWhich items would you like to delete? '
                     'Please type their numbers from list above '
