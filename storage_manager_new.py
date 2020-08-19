@@ -1,3 +1,4 @@
+from operator import attrgetter
 
 
 class Storage:
@@ -5,184 +6,278 @@ class Storage:
 
     def __init__(self, name):
         self.name = name
+        self.items = []
+        self.clear_storage_items_and_load_items_from_file()
 
-    def load_items_from_file(self):
-        Item.instances = []
+    def clear_storage_items_and_load_items_from_file(self):
+        self.items.clear()
         File = open(Storage.database_file, 'r')
         for line in File.readlines():
             line = line.rstrip('\n')
-            Item.instance_from_string(line)
+            self.items.append(Item.create_instance_from_string(line))
 
-    def add_item(self):
-        # collect_new_item_data
-        new_items_data = []
-        add_more = True
-        while add_more == True:
-            new_item = Interface.get_user_choice(
-                'Please provide new item data in order: category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).')
-            if new_item.lower() != 'menu':
-                new_items_data.append(new_item)
-            else:
-                break
-            ask_for_more = Interface.get_user_choice(
-                'Would you like to add another item? Please type Y/N')
-            if ask_for_more.lower() == 'n':
-                add_more = False
-        # create_item_instance and write to database_file
-        for string in new_items_data:
-            try:
-                data = string.split(', ')
-                quantity = int(data.pop(3))
-                string_data = ', '.join(data)
-                for i in range(1, (quantity + 1)):
-                    Item.create_instance_from_string_and_write_to_database_file(
-                        string_data)
-            except IndexError:
-                pass
+    def write_to_database_file(self, stringified_item):
+        File = open(self.database_file, 'a')
+        File.write(stringified_item + '\n')
+        File.close()
 
-    def show_all_items(self):
-        print('')
-        items_to_show = []
-        if Item.instances != []:
-            for item in Item.instances:
-                items_to_show.append(
-                    f'({item.category})  {item.type} {item.model}')
-            for item in sorted(items_to_show):
-                print(item)
-        else:
-            print('---\nList of items is empty\n---')
-        print('\n')
+    def add_item(self, stringified_new_item_data):
+        try:
+            new_item_data = stringified_new_item_data.split(
+                ', ')
+            quantity = int(new_item_data.pop(3))
+            new_item_data_without_quantity = ', '.join(
+                new_item_data)
+            for i in range(1, (quantity + 1)):
+                Item.create_instance_from_string(
+                    new_item_data_without_quantity)
+                self.write_to_database_file(new_item_data_without_quantity)
+            self.clear_storage_items_and_load_items_from_file()
+            return True
+        except (IndexError, ValueError) as e:
+            return e
 
-    def show_items_from_category(self):
-        category = Interface.get_user_choice(
-            'Print items from category:').lower()
-        for item in Item.instances:
-            if category == item.category.lower():
-                print(f'({item.category})  {item.type} {item.model}')
-        print('\n')
+    def find_items_by_category_or_type(self, category_or_type):
+        items_from_specified_category = [
+            item for item in self.items if category_or_type.lower().strip() == item.category.lower() or category_or_type.lower().strip() == item.type.lower()]
+        return items_from_specified_category
 
-    def delete_item(self):
-        File = open(Storage.database_file, 'r')
+    def find_specific_item(self, info_about_item):
+        File = open(self.database_file, 'r')
+        items_in_database_file = File.readlines()
+        File.close()
+        founded_items = [
+            item for item in items_in_database_file if info_about_item.lower() in item.lower()]
+        return founded_items
+
+    def delete_items(self, items_to_delete):
+        File = open(self.database_file, 'r')
         items_in_file = File.readlines()
         File.close()
-        choice = Interface.get_user_choice(
-            'Which item would you like to delete? Please provide specific info about type or model.')
-        for item in items_in_file:
-            if choice.lower() in item.lower():
-                confirmation = None
-                while confirmation != 'y' and confirmation != 'n':
-                    confirmation = Interface.get_user_choice(
-                        'Please confirm (Y/N) that you want to delete item: ' + item).lower()
-                    if confirmation == 'y':
-                        items_in_file.remove(item)
-                        File = open(Storage.database_file, 'w')
-                        for line in items_in_file:
-                            File.write(line)
-                        File.close()
-                        initialize()
-                    elif confirmation == 'n':
-                        break
-                    elif confirmation == 'menu':
-                        break
+        for item in items_to_delete:
+            items_in_file.remove(item)
+            File = open(self.database_file, 'w')
+            for line in items_in_file:
+                File.write(line)
+            File.close()
+        self.clear_storage_items_and_load_items_from_file()
 
     def delete_all_items(self):
-        delete_all_confirmation = Interface.get_user_choice(
-            'Please confirm (YES/NO) that you want to delete all items')
-        if delete_all_confirmation.lower() == 'yes':
-            File = open(Storage.database_file, 'w')
-            File.close()
-            initialize()
-        else:
-            pass
+        File = open(Storage.database_file, 'w')
+        File.close()
+        self.clear_storage_items_and_load_items_from_file()
 
 
 class Item:
-    instances = []
 
     def __init__(self, category, type, model):
         self.category = category
         self.type = type
         self.model = model
-        Item.instances.append(self)
+
+    def __str__(self):
+        return f'({self.category})  {self.type} {self.model}'
 
     @classmethod
-    def instance_from_string(cls, string):
-        (category, type, model) = string.split(', ')
-        cls(category, type, model)
-
-    @classmethod
-    def create_instance_from_string_and_write_to_database_file(cls, string):
-        Item.instance_from_string(string)
-        File = open(Storage.database_file, 'a')
-        File.write(string + '\n')
-        File.close()
+    def create_instance_from_string(cls, stringified_item):
+        (category, type, model) = stringified_item.split(', ')
+        return cls(category, type, model)
 
 
 class Interface:
-    def __init__(self, name, option_1, option_2, option_3, option_4, option_5):
-        self.name = name
-        self.option_1 = option_1
-        self.option_2 = option_2
-        self.option_3 = option_3
-        self.option_4 = option_4
-        self.option_5 = option_5
+    option_dict = {1: 'Add item', 2: 'Show all items',
+                   3: 'Show list of items from a certain category or type', 4: 'Delete item or group of items', 5: 'Delete all items'}
 
-    def menu_option_list(self):
-        option_list = [self.option_1, self.option_2,
-                       self.option_3, self.option_4, self.option_5]
-        return option_list
+    def __init__(self, name, storage):
+        self.storage = storage
+        self.start_program_interface()
 
-    def start_program_interface(self, storage):
-        print('What would you like to do? Type a number.\n')
-        self.show_action_options_and_execute_user_choice(storage)
+    def adding_items(self):
+        while True:
+            new_item_data = self.collect_data(
+                '\nPlease provide new item data in order: '
+                'category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).\n')
+            self.back_to_interface_if_data_is_menu(new_item_data)
+            adding_new_item_result = self.storage.add_item(
+                new_item_data)
+            if adding_new_item_result == True:
+                self.inform_user('New item was added.')
+            else:
+                if str(adding_new_item_result) == 'pop index out of range':
+                    self.inform_user(
+                        'Adding item was cancelled because of an error, please try again. Remember about commas and spaces.')
+                    break
+                elif str(adding_new_item_result).startswith('invalid literal for int()'):
+                    self.inform_user(
+                        'Adding item was cancelled because of an error, please try again. Remember about providing quantity as a number.')
+                    break
+            self.get_confirmation(
+                'Would you like to add another item?')
 
-    def show_action_options_and_execute_user_choice(self, storage):
-        menu = self.create_and_show_option_menu()
-        choice = Interface.get_user_choice(None)
+    def showing_all_items(self):
+        print('')
+        print('----')
+        all_items = sorted(
+            self.storage.items, key=attrgetter('category', 'type', 'model'))
+        if all_items:
+            for item in all_items:
+                print(item)
+        else:
+            self.inform_user('List of items is empty.')
+        print('----')
+
+    def showing_items_by_category_or_type(self):
+        category_or_type = self.collect_data(
+            '\nPrint items from category or type:\n')
+        self.back_to_interface_if_data_is_menu(category_or_type)
+        items_in_specified_category = self.storage.find_items_by_category_or_type(
+            category_or_type)
+        print('')
+        print('----')
+        if items_in_specified_category:
+            for item in items_in_specified_category:
+                print(item)
+        else:
+            self.inform_user(
+                f'Couldn\'t find any item from category/type {category_or_type}')
+        print('----')
+        print('')
+
+    def deleting_items(self):
+        item_to_delete = self.collect_data(
+            '\nWhich item would you like to delete? '
+            'Please provide specific info about type, model or category.\n')
+        self.back_to_interface_if_data_is_menu(item_to_delete)
+
+        founded_items = self.storage.find_specific_item(item_to_delete)
+        self._show_searching_results(founded_items)
+
+        if len(founded_items) == 1:
+            self._deleting_one_item(founded_items)
+
+        if len(founded_items) > 1:
+            founded_items_dict = {number + 1: item for number,
+                                  item in enumerate(founded_items)}
+            item_to_delete = self._get_specific_info_about_items_to_delete()
+
+            if item_to_delete.lower() == 'all':
+                self._delete_all_founded_items(founded_items)
+
+            if item_to_delete != 'all':
+                self._delete_one_or_few_items(
+                    item_to_delete, founded_items_dict)
+
+    def _show_searching_results(self, founded_items):
+        if not founded_items:
+            self.inform_user('Item was not founded.')
+        else:
+            self.inform_user(
+                f'\nNumber of founded items: {len(founded_items)}')
+            print('----')
+            founded_items.sort()
+            for number, item in enumerate(founded_items):
+                print(str(number + 1) + ': ' + item.rstrip('\n'))
+            print('----')
+
+    def _deleting_one_item(self, founded_item):
+        if self.get_confirmation('Are you sure?'):
+            self.storage.delete_items(founded_item)
+            self.inform_user('Deleting was successfull.')
+
+    def _get_specific_info_about_items_to_delete(self):
+        items_to_delete = self.collect_data(
+            '\nWhich items would you like to delete? '
+            'Please type their numbers from list above '
+            '(with commas and spaces, like: 1, 3, 6, 9).'
+            '\nType ALL to delete all items froms the list above.\n')
+        self.back_to_interface_if_data_is_menu(items_to_delete)
+        return items_to_delete
+
+    def _delete_all_founded_items(self, founded_items):
+        if self.get_confirmation('Are you sure?'):
+            self.storage.delete_items(founded_items)
+            self.inform_user('Deleting was successfull.')
+
+    def _delete_one_or_few_items(self, item_to_delete, founded_items_dict):
+        try:
+            numbers_of_items_to_delete = [
+                int(num) for num in item_to_delete.split(', ')]
+            final_items_to_delete = [founded_items_dict.get(
+                number) for number in numbers_of_items_to_delete]
+            self.storage.delete_items(final_items_to_delete)
+            self.inform_user('Deleting was successfull.')
+        except ValueError:
+            self.inform_user(
+                'There was an error, please try again'
+                ' (make sure to type list of numbers with commas and spaces, like: 1, 3, 6, 9).')
+
+    def deleting_all_items(self):
+        if self.get_confirmation('Are you sure that you want to delete all items?'):
+            self.storage.delete_all_items()
+            self.inform_user('All items were successfully removed.')
+
+    def start_program_interface(self):
+        while True:
+            self.inform_user('What would you like to do? Type a number.')
+            self.show_option_menu_and_execute_user_choice_from_menu()
+
+    def show_option_menu_and_execute_user_choice_from_menu(self):
+        self.show_option_menu()
+        self.execute_user_choice_from_menu()
+
+    def show_option_menu(self):
+        for number, action in self.option_dict.items():
+            print(f'{number}. {action}')
+
+    def execute_user_choice_from_menu(self):
+        choice = input()
         try:
             choice = int(choice)
-        except:
-            print('\nPlease pick number from the options printed above.\n')
-            self.start_program_interface(storage)
-        if choice in menu.keys():
+        except ValueError:
+            self.inform_user(
+                'Please pick number from the options printed above.')
+            self.start_program_interface()
+        if choice in self.option_dict.keys():
             if choice == 1:
-                storage.add_item()
+                self.adding_items()
             elif choice == 2:
-                storage.show_all_items()
+                self.showing_all_items()
             elif choice == 3:
-                storage.show_items_from_category()
+                self.showing_items_by_category_or_type()
             elif choice == 4:
-                storage.delete_item()
+                self.deleting_items()
             elif choice == 5:
-                storage.delete_all_items()
-        elif choice not in menu.keys():
-            print('\nPlease pick number from the options printed above.\n')
-            self.start_program_interface(storage)
-        self.start_program_interface(storage)
+                self.deleting_all_items()
+        elif choice not in self.option_dict.keys():
+            self.inform_user(
+                'Please pick number from the options printed above.')
+            self.start_program_interface()
 
-    def create_and_show_option_menu(self):
-        option_dict = {}
-        for action in self.menu_option_list():
-            option_dict.update(
-                {(self.menu_option_list().index(action) + 1): action})
-        for number, action in option_dict.items():
-            print(f'{number}. {action}')
-        return option_dict
+    def back_to_interface_if_data_is_menu(self, data):
+        if data.lower() == 'menu':
+            self.start_program_interface()
+
+    def get_confirmation(self, decision_to_make):
+        print('\n' + decision_to_make + ' Please type YES or NO.')
+        user_decision = input().lower()
+        if user_decision == 'yes':
+            return True
+        elif user_decision != 'yes':
+            self.start_program_interface()
 
     @staticmethod
-    def get_user_choice(prompt_info):
-        if prompt_info != None:
-            print('\n' + prompt_info)
-        user_choice = input()
-        return user_choice
+    def collect_data(info_to_prompt=None):
+        data = input(info_to_prompt)
+        return data
+
+    @staticmethod
+    def inform_user(info):
+        print('\n' + info + '\n')
 
 
 def initialize():
-    main_storage = Storage('Main Storage')
-    main_storage.load_items_from_file()
-    main_menu = Interface('Main Menu', 'Add item', 'Show all items',
-                          'Show list of items from a certain category', 'Delete item', 'Delete all items')
-    main_menu.start_program_interface(main_storage)
+    my_storage = Storage('Main Storage')
+    Interface('Main Menu', my_storage)
 
 
 initialize()
