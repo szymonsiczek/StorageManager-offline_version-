@@ -150,24 +150,24 @@ class Interface:
         self.back_to_interface_if_data_is_menu(item_to_delete)
 
         founded_items = self.storage.find_specific_item(item_to_delete)
-        self.show_searching_results(founded_items)
+        self._show_searching_results(founded_items)
 
         if len(founded_items) == 1:
-            self.deleting_one_item(founded_items)
+            self._deleting_one_item(founded_items)
 
         if len(founded_items) > 1:
             founded_items_dict = {number + 1: item for number,
                                   item in enumerate(founded_items)}
-            item_to_delete = self.get_specific_info_about_items_to_delete()
+            item_to_delete = self._get_specific_info_about_items_to_delete()
 
             if item_to_delete.lower() == 'all':
-                self.delete_all_founded_items(founded_items)
+                self._delete_all_founded_items(founded_items)
 
             if item_to_delete != 'all':
-                self.delete_one_or_few_items(
+                self._delete_one_or_few_items(
                     item_to_delete, founded_items_dict)
 
-    def show_searching_results(self, founded_items):
+    def _show_searching_results(self, founded_items):
         if not founded_items:
             self.inform_user('Item was not founded.')
         else:
@@ -179,12 +179,12 @@ class Interface:
                 print(str(number + 1) + ': ' + item.rstrip('\n'))
             print('----')
 
-    def deleting_one_item(self, founded_item):
+    def _deleting_one_item(self, founded_item):
         if self.get_confirmation('Are you sure?'):
             self.storage.delete_items(founded_item)
             self.inform_user('Deleting was successfull.')
 
-    def get_specific_info_about_items_to_delete(self):
+    def _get_specific_info_about_items_to_delete(self):
         items_to_delete = self.collect_data(
             '\nWhich items would you like to delete? '
             'Please type their numbers from list above '
@@ -193,12 +193,12 @@ class Interface:
         self.back_to_interface_if_data_is_menu(items_to_delete)
         return items_to_delete
 
-    def delete_all_founded_items(self, founded_items):
+    def _delete_all_founded_items(self, founded_items):
         if self.get_confirmation('Are you sure?'):
             self.storage.delete_items(founded_items)
             self.inform_user('Deleting was successfull.')
 
-    def delete_one_or_few_items(self, item_to_delete, founded_items_dict):
+    def _delete_one_or_few_items(self, item_to_delete, founded_items_dict):
         try:
             numbers_of_items_to_delete = [
                 int(num) for num in item_to_delete.split(', ')]
