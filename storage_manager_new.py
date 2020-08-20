@@ -324,12 +324,12 @@ class Interface:
         elif user_decision != 'yes':
             self.start_program_interface()
 
-    @ staticmethod
+    @staticmethod
     def collect_data(info_to_prompt=None):
         data = input(info_to_prompt)
         return data
 
-    @ staticmethod
+    @staticmethod
     def inform_user(info):
         print('\n' + info + '\n')
 
