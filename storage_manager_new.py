@@ -14,7 +14,12 @@ class Storage:
         File = open(Storage.database_file, 'r')
         for line in File.readlines():
             line = line.rstrip('\n')
-            self.items.append(Item.create_instance_from_string(line))
+            if line.startswith('Sound'):
+                self.items.append(Sound_item.create_instance_from_string(line))
+            elif line.startswith('Light'):
+                self.items.append(Light_item.create_instance_from_string(line))
+            else:
+                self.items.append(Item.create_instance_from_string(line))
 
     def write_to_database_file(self, stringified_item):
         File = open(self.database_file, 'a')
@@ -22,20 +27,30 @@ class Storage:
         File.close()
 
     def add_item(self, stringified_new_item_data):
+        new_item_data = stringified_new_item_data.split(
+            ', ')
         try:
-            new_item_data = stringified_new_item_data.split(
-                ', ')
             quantity = int(new_item_data.pop(3))
+        except (IndexError, ValueError) as e:
+            return e
+
+        check_value = self._check_if_value_type_is_proper(new_item_data)
+        if check_value != ValueError:
             new_item_data_without_quantity = ', '.join(
                 new_item_data)
             for i in range(1, (quantity + 1)):
-                Item.create_instance_from_string(
-                    new_item_data_without_quantity)
                 self.write_to_database_file(new_item_data_without_quantity)
             self.clear_storage_items_and_load_items_from_file()
             return True
-        except (IndexError, ValueError) as e:
-            return e
+        else:
+            return ValueError
+
+    def _check_if_value_type_is_proper(self, new_item_data):
+        if len(new_item_data) == 4:
+            try:
+                int(new_item_data[3])
+            except ValueError:
+                return ValueError
 
     def find_items_by_category_or_type(self, category_or_type):
         items_from_specified_category = [
@@ -84,6 +99,48 @@ class Item:
         return cls(category, type, model)
 
 
+class Sound_item(Item):
+    def __init__(self, category, type, model, max_decibels):
+        super().__init__(category, type, model)
+        self.max_decibels = max_decibels
+
+    def __str__(self):
+        if self.max_decibels:
+            return f'({self.category})  {self.type} {self.model}, max decibels = {self.max_decibels} dB'
+        elif not self.max_decibels:
+            return f'({self.category})  {self.type} {self.model}'
+
+    @classmethod
+    def create_instance_from_string(cls, stringified_item):
+        splitted_item_data = stringified_item.split(', ')
+        if len(splitted_item_data) == 3:
+            max_decibels = None
+            splitted_item_data.append(max_decibels)
+        (category, type, model, max_decibels) = splitted_item_data
+        return cls(category, type, model, max_decibels)
+
+
+class Light_item(Item):
+    def __init__(self, category, type, model, max_lumens):
+        super().__init__(category, type, model)
+        self.max_lumens = max_lumens
+
+    def __str__(self):
+        if self.max_lumens:
+            return f'({self.category})  {self.type} {self.model}, max lumens = {self.max_lumens} lm'
+        elif not self.max_lumens:
+            return f'({self.category})  {self.type} {self.model}'
+
+    @classmethod
+    def create_instance_from_string(cls, stringified_item):
+        splitted_item_data = stringified_item.split(', ')
+        if len(splitted_item_data) == 3:
+            max_decibels = None
+            splitted_item_data.append(max_decibels)
+        (category, type, model, max_decibels) = splitted_item_data
+        return cls(category, type, model, max_decibels)
+
+
 class Interface:
     option_dict = {1: 'Add item', 2: 'Show all items',
                    3: 'Show list of items from a certain category or type', 4: 'Delete item or group of items', 5: 'Delete all items'}
@@ -96,7 +153,9 @@ class Interface:
         while True:
             new_item_data = self.collect_data(
                 '\nPlease provide new item data in order: '
-                'category, type, model, quantity (Example: Sound, Mixer, Midas M32, 1).\n')
+                'category, type, model, quantity '
+                '(+ max decibels if item is a speaker '
+                'or + max lumens if item is a lamp).\n')
             self.back_to_interface_if_data_is_menu(new_item_data)
             adding_new_item_result = self.storage.add_item(
                 new_item_data)
@@ -104,13 +163,13 @@ class Interface:
                 self.inform_user('New item was added.')
             else:
                 if str(adding_new_item_result) == 'pop index out of range':
-                    self.inform_user(
-                        'Adding item was cancelled because of an error, please try again. Remember about commas and spaces.')
-                    break
+                    msg = 'Adding item was cancelled because of an error, please try again. Remember about commas and spaces.'
                 elif str(adding_new_item_result).startswith('invalid literal for int()'):
-                    self.inform_user(
-                        'Adding item was cancelled because of an error, please try again. Remember about providing quantity as a number.')
-                    break
+                    msg = 'Adding item was cancelled because of an error, please try again. Remember about providing quantity as a number.'
+                elif adding_new_item_result == ValueError:
+                    msg = 'Adding item was cancelled because of an error, max decibels/max lumens has to be a number.'
+                self.inform_user(msg)
+                break
             self.get_confirmation(
                 'Would you like to add another item?')
 
@@ -265,12 +324,12 @@ class Interface:
         elif user_decision != 'yes':
             self.start_program_interface()
 
-    @staticmethod
+    @ staticmethod
     def collect_data(info_to_prompt=None):
         data = input(info_to_prompt)
         return data
 
-    @staticmethod
+    @ staticmethod
     def inform_user(info):
         print('\n' + info + '\n')
 
